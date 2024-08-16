@@ -68,5 +68,7 @@ out/
 .svelte-kit
 
 .env
+.envDev
+.envProd
 *.prettierrc
 *.prettierrc.json
