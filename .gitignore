@@ -72,3 +72,4 @@ out/
 .envProd
 *.prettierrc
 *.prettierrc.json
+.ln
