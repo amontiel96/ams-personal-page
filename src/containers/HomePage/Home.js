@@ -30,7 +30,7 @@ const Home = () => {
   const [config, setConfig] = useState(null);
   const [error, setError] = useState(null);
 
-  const [visits, setVisit] = useState(null);
+  const [visits, setVisit] = useState(1);
   const [isLanguageChange, setLanguageChange] = useState(false);
   const [newLang, setNewLang] = useState('es');
 
@@ -67,11 +67,21 @@ const Home = () => {
     const unsubscribe = onValue(
       dataVisit,
       (snapshot) => {
-        const value = snapshot.val();
-        setVisit(value.count);
+        var items = 0;
+
+        snapshot.forEach((childSnapshot) => {
+          const key = childSnapshot.key; // La clave del hijo
+          const data = childSnapshot.val(); // Los datos del hijo
+          console.log(`Clave: ${key}, Datos:`, data);
+          if(key != 'count'){
+            items = items + 1;
+          }
+        });
+
+        setVisit(items);
       },
       (error) => {
-        setVisit(0);
+        setVisit(1);
       }
     );
 

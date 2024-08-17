@@ -10,7 +10,7 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 import { getDatabase, ref, set } from 'firebase/database';
 
-import { generateUniqueIdWithTimestamp } from '../utils/utils';
+import { generateUniqueIdWithTimestamp, getRegisterDate } from '../utils/utils';
 
 const Contact = ({ data, config, profile }) => {
   const [formValues, setFormValues] = useState({
@@ -57,7 +57,7 @@ const Contact = ({ data, config, profile }) => {
   function sendMsg(values) {
     setIsLoading(true);
 
-    const uniqueId = generateUniqueIdWithTimestamp();
+    const uniqueId = values.name+"-REGISTERDATE" + getRegisterDate() + "-"+generateUniqueIdWithTimestamp();
     const db = getDatabase();
     set(ref(db, 'messages/es/' + uniqueId), {
       values,
@@ -80,6 +80,9 @@ const Contact = ({ data, config, profile }) => {
       });
 
     setFormValues({
+      subject: values.subject,
+      name: values.name,
+      email: values.email,
       message: '',
     });
   }

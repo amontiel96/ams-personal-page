@@ -73,4 +73,5 @@ out/
 *.prettierrc
 *.prettierrc.json
 .ln
+.lh
 
