@@ -9,15 +9,7 @@ import '../assets/vendor/swiper/swiper-bundle.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 const About = ({ data, config }) => {
-  const items = [
-    { label: 'Birthday', value: '20 May 1996', icon: 'bi bi-chevron-right' },
-    {
-      label: 'Website',
-      value: 'www.artmontielssolutions.com',
-      icon: 'bi bi-chevron-right',
-    },
-  ];
-
+  
   return (
     <section id="about" className="about section">
       <div className="container section-title">
