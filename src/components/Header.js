@@ -14,6 +14,7 @@ import {
   ref,
   onValue,
   set,
+  update
 } from "../services/firebase_connection.js";
 
 import {
@@ -50,8 +51,10 @@ const Header = ({ data, config, visits, onHeaderChange }) => {
         console.log("visit failed");
       });
 
-    set(ref(database, "visits/count"), {
-      visits
+      var visitShow = visits + 1;
+
+      update(ref(database, "visits"), {
+      count: visitShow
     })
       .then(() => {
         console.log("visit add");

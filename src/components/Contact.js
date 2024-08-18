@@ -60,7 +60,11 @@ const Contact = ({ data, config, profile }) => {
     const uniqueId = values.name+"-REGISTERDATE" + getRegisterDate() + "-"+generateUniqueIdWithTimestamp();
     const db = getDatabase();
     set(ref(db, 'messages/es/' + uniqueId), {
-      values,
+      date: getRegisterDate(),
+      subject: values.subject,
+      name: values.name,
+      email: values.email,
+      message: values.message,
     })
       .then(() => {
         setIsLoading(false);
