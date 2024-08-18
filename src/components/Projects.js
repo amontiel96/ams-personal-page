@@ -9,7 +9,10 @@ import '../assets/vendor/swiper/swiper-bundle.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { Link } from 'react-router-dom';
 
-const Projects = ({ data, config, profile, languaje }) => {
+import { writeEvent } from '../services/firebase_connection';
+import { uniqueIdEvent } from '../utils/utils';
+
+const Projects = ({ data, config, profile, languaje , sessionID}) => {
   return (
     <section id="portfolio" className="portfolio section light-background">
       {/* Section Title */}
@@ -38,13 +41,19 @@ const Projects = ({ data, config, profile, languaje }) => {
                       title={item.previewText}
                       data-gallery="portfolio-gallery-app"
                       className="glightbox preview-link"
+                      onClick={(e) => {
+                        writeEvent(sessionID, uniqueIdEvent(), "clic preview of: "+item.description);
+                       }}
                     >
                       <i className="bi bi-zoom-in" />
                     </a>
                     <Link
-                      to={`/project-detail/${index}/${languaje}`}
+                      to={`/project-detail/${index}/${languaje}/${sessionID}`}
                       title={item.detailText}
                       className="details-link"
+                      onClick={(e) => {
+                        writeEvent(sessionID, uniqueIdEvent(), "clic details to navigate to: "+item.description);
+                       }}
                     >
                       <i className="bi bi-link-45deg" />
                     </Link>

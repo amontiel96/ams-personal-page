@@ -1,5 +1,6 @@
-import { initializeApp } from 'firebase/app';
-import { getDatabase, ref, onValue, set, update } from 'firebase/database';
+import { initializeApp } from "firebase/app";
+import { getDatabase, ref, onValue, set, update } from "firebase/database";
+import { getRegisterDate } from "../utils/utils";
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -16,5 +17,19 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 
+function writeEvent(idSession, idEvent, event) {
+  
+  update(ref(database, "visits/"+idSession+"/events/"+idEvent), {
+    date: getRegisterDate(),
+    track: event,
+  })
+    .then(() => {
+      console.log("event add");
+    })
+    .catch((error) => {
+      console.log("event failed");
+    });
+}
+
 // Exporta los servicios para usarlos en otras partes de la aplicación
-export { app, database, ref, onValue, set, update };
+export { app, database, ref, onValue, set, update, writeEvent };

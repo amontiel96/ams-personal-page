@@ -22,6 +22,7 @@ import {
   onValue,
   set,
 } from '../../services/firebase_connection.js';
+import { generateUniqueIdWithTimestamp } from '../../utils/utils.js';
 
 const Home = () => {
   const [loading, setLoading] = useState(true);
@@ -33,6 +34,8 @@ const Home = () => {
   const [visits, setVisit] = useState(1);
   const [isLanguageChange, setLanguageChange] = useState(false);
   const [newLang, setNewLang] = useState('es');
+
+  const [sessionID, setSessionID] = useState(generateUniqueIdWithTimestamp());
 
   useEffect(() => {
     const dataRef = ref(database, 'master-data');
@@ -106,6 +109,7 @@ const Home = () => {
             config={config}
             visits={visits}
             onHeaderChange={handleHeaderChange}
+            sessionID={sessionID}
           />
           <main className="main">
             <Hero data={data} config={config} />
@@ -125,11 +129,14 @@ const Home = () => {
               config={config}
               profile={data.profile}
               languaje={newLang}
+              sessionID={sessionID}
             />
             <Contact
               data={data.sections.contact}
               config={config}
               profile={data.profile}
+              sessionID={sessionID}
+              languaje={newLang}
             />
           </main>
           <Footer

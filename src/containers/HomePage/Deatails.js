@@ -20,7 +20,7 @@ const Details = () => {
   const [config, setConfig] = useState(null);
   const [error, setError] = useState(null);
 
-  const { id, cc } = useParams();
+  const { id, cc, sessionID} = useParams();
 
   useEffect(() => {
     const dataRef = ref(database, 'master-data');
@@ -57,6 +57,7 @@ const Details = () => {
               config={config}
               profile={data.profile}
               item={id}
+              sessionID={sessionID}
             />
           </main>
           <Footer

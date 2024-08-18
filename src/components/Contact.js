@@ -1,23 +1,24 @@
-import React, { useState, useEffect, useRef } from 'react';
-import '../index.css';
-import '../assets/vendor/bootstrap/css/bootstrap.min.css';
-import '../assets/vendor/bootstrap-icons/bootstrap-icons.css';
-import '../assets/vendor/aos/aos.css';
-import '../assets/vendor/glightbox/css/glightbox.min.css';
-import '../assets/vendor/swiper/swiper-bundle.min.css';
+import React, { useState, useEffect, useRef } from "react";
+import "../index.css";
+import "../assets/vendor/bootstrap/css/bootstrap.min.css";
+import "../assets/vendor/bootstrap-icons/bootstrap-icons.css";
+import "../assets/vendor/aos/aos.css";
+import "../assets/vendor/glightbox/css/glightbox.min.css";
+import "../assets/vendor/swiper/swiper-bundle.min.css";
 
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
-import { getDatabase, ref, set } from 'firebase/database';
+import { getDatabase, ref, set } from "firebase/database";
 
-import { generateUniqueIdWithTimestamp, getRegisterDate } from '../utils/utils';
+import { generateUniqueIdWithTimestamp, getRegisterDate, uniqueIdEvent } from "../utils/utils";
+import { writeEvent } from "../services/firebase_connection";
 
-const Contact = ({ data, config, profile }) => {
+const Contact = ({ data, config, profile, sessionID, languaje }) => {
   const [formValues, setFormValues] = useState({
-    subject: '',
-    name: '',
-    email: '',
-    message: '',
+    subject: "",
+    name: "",
+    email: "",
+    message: "",
   });
 
   const [errors, setErrors] = useState({});
@@ -31,10 +32,10 @@ const Contact = ({ data, config, profile }) => {
       [name]: value,
     });
 
-    if (value !== '') {
+    if (value !== "") {
       setErrors({
         ...errors,
-        [name]: '',
+        [name]: "",
       });
     }
   };
@@ -42,24 +43,31 @@ const Contact = ({ data, config, profile }) => {
   const handleSubmit = () => {
     let validationErrors = {};
     Object.keys(formValues).forEach((key) => {
-      if (formValues[key].trim() === '') {
+      if (formValues[key].trim() === "") {
         validationErrors[key] = data.contactForm.error.label;
       }
     });
 
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
+      writeEvent(
+        sessionID,
+        uniqueIdEvent(),
+        "error validation in message fields required"
+      );
     } else {
       sendMsg(formValues);
+      writeEvent(sessionID, uniqueIdEvent(), "send message");
     }
   };
 
   function sendMsg(values) {
     setIsLoading(true);
 
-    const uniqueId = values.name+"-REGISTERDATE" + getRegisterDate() + "-"+generateUniqueIdWithTimestamp();
+    const uniqueId = generateUniqueIdWithTimestamp() + "-"+
+      values.name;
     const db = getDatabase();
-    set(ref(db, 'messages/es/' + uniqueId), {
+    set(ref(db, "messages/es/" + uniqueId), {
       date: getRegisterDate(),
       subject: values.subject,
       name: values.name,
@@ -67,10 +75,15 @@ const Contact = ({ data, config, profile }) => {
       message: values.message,
     })
       .then(() => {
+        writeEvent(
+          sessionID,
+          uniqueIdEvent(),
+          "send message successfully"
+        );
         setIsLoading(false);
         setNotification({
           message: data.contactForm.submit.succes,
-          type: 'success',
+          type: "success",
           duration: 5000, // La notificación desaparecerá después de 5 segundos
         });
       })
@@ -78,22 +91,27 @@ const Contact = ({ data, config, profile }) => {
         setIsLoading(false);
         setNotification({
           message: data.contactForm.submit.succes,
-          type: 'error',
+          type: "error",
           duration: 5000, // La notificación desaparecerá después de 5 segundos
         });
+        writeEvent(
+          sessionID,
+          uniqueIdEvent(),
+          "send message failed"
+        );
       });
 
     setFormValues({
       subject: values.subject,
       name: values.name,
       email: values.email,
-      message: '',
+      message: "",
     });
   }
 
   function Notification({
     message,
-    type = 'success',
+    type = "success",
     duration = 3000,
     onClose,
   }) {
@@ -174,6 +192,13 @@ const Contact = ({ data, config, profile }) => {
                     href={config.cvPath}
                     download=""
                     className="btn btn-primary"
+                    onClick={(e) => {
+                      writeEvent(
+                        sessionID,
+                        uniqueIdEvent(),
+                        "clic download cv " + languaje
+                      );
+                    }}
                   >
                     {data.labelDownload}
                   </a>
@@ -199,7 +224,7 @@ const Contact = ({ data, config, profile }) => {
                       required
                     />
                     {errors.name && (
-                      <p style={{ color: 'red' }}>{errors.name}</p>
+                      <p style={{ color: "red" }}>{errors.name}</p>
                     )}
                   </div>
 
@@ -217,7 +242,7 @@ const Contact = ({ data, config, profile }) => {
                       required
                     />
                     {errors.email && (
-                      <p style={{ color: 'red' }}>{errors.email}</p>
+                      <p style={{ color: "red" }}>{errors.email}</p>
                     )}
                   </div>
 
@@ -235,7 +260,7 @@ const Contact = ({ data, config, profile }) => {
                       required
                     />
                     {errors.subject && (
-                      <p style={{ color: 'red' }}>{errors.subject}</p>
+                      <p style={{ color: "red" }}>{errors.subject}</p>
                     )}
                   </div>
 
@@ -248,14 +273,14 @@ const Contact = ({ data, config, profile }) => {
                       name="message"
                       rows={10}
                       id="message-field"
-                      defaultValue={''}
+                      defaultValue={""}
                       type="text"
                       value={formValues.message}
                       onChange={handleChange}
                       required
                     />
                     {errors.message && (
-                      <p style={{ color: 'red' }}>{errors.message}</p>
+                      <p style={{ color: "red" }}>{errors.message}</p>
                     )}
                   </div>
                   <div className="col-md-12 text-center">
@@ -266,7 +291,7 @@ const Contact = ({ data, config, profile }) => {
                     >
                       {isLoading
                         ? data.contactForm.submit.loading
-                        : data.contactForm.submit.label}{' '}
+                        : data.contactForm.submit.label}{" "}
                       {/* Cambia el texto cuando está cargando */}
                     </button>
                     {notification && (

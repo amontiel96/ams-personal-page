@@ -10,8 +10,10 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import AOS from 'aos';
 import Swiper from 'swiper/bundle';
 import { Link } from 'react-router-dom';
+import { writeEvent } from '../services/firebase_connection';
+import { uniqueIdEvent } from '../utils/utils';
 
-const ProjectDetail = ({ data, config, profile, item }) => {
+const ProjectDetail = ({ data, config, profile, item, sessionID }) => {
   useEffect(() => {
     // Inicializar AOS
     AOS.init({
@@ -117,6 +119,13 @@ const ProjectDetail = ({ data, config, profile, item }) => {
                             className="github"
                             target="_blank"
                             download="false"
+                            onClick={(e) => {
+                              writeEvent(
+                                sessionID,
+                                uniqueIdEvent(),
+                                "clic redirect to github to repository: " + data.registers[item].description
+                              );
+                            }}
                           >
                             <i className="bi bi-github" />
                           </a>

@@ -14,15 +14,16 @@ import {
   ref,
   onValue,
   set,
-  update
+  update,
+  writeEvent,
 } from "../services/firebase_connection.js";
 
 import {
   getRegisterDate,
-  generateUniqueIdWithTimestamp,
+  uniqueIdEvent
 } from "../utils/utils.js";
 
-const Header = ({ data, config, visits, onHeaderChange }) => {
+const Header = ({ data, config, visits, onHeaderChange, sessionID }) => {
   const [newLanguage, setNewLanguage] = useState("es"); // Inicializa según lo necesario
 
   useEffect(() => {
@@ -38,10 +39,15 @@ const Header = ({ data, config, visits, onHeaderChange }) => {
     const selectedLanguage = event.target.value;
 
     setNewLanguage(selectedLanguage.toLowerCase());
+    writeEvent(
+      sessionID,
+      uniqueIdEvent(),
+      "change language to " + selectedLanguage
+    );
   };
 
   function addVisit() {
-    set(ref(database, "visits/" + generateUniqueIdWithTimestamp()), {
+    set(ref(database, "visits/" + sessionID), {
       register: getRegisterDate(),
     })
       .then(() => {
@@ -51,10 +57,10 @@ const Header = ({ data, config, visits, onHeaderChange }) => {
         console.log("visit failed");
       });
 
-      var visitShow = visits + 1;
+    var visitShow = visits + 1;
 
-      update(ref(database, "visits"), {
-      count: visitShow
+    update(ref(database, "visits"), {
+      count: visitShow,
     })
       .then(() => {
         console.log("visit add");
@@ -112,6 +118,13 @@ const Header = ({ data, config, visits, onHeaderChange }) => {
             className={link.className}
             target="_blank"
             download={link.download ? "" : undefined}
+            onClick={(e) => {
+              writeEvent(
+                sessionID,
+                uniqueIdEvent(),
+                "clic social-link " + link.className
+              );
+            }}
           >
             <i className={link.iconClass} />
           </a>
@@ -125,37 +138,94 @@ const Header = ({ data, config, visits, onHeaderChange }) => {
               href="#hero"
               className="active"
               style={{ textDecoration: "auto" }}
+              onClick={(e) => {
+                writeEvent(
+                  sessionID,
+                  uniqueIdEvent(),
+                  "clic home section"
+                );
+              }}
             >
               <i className="bi bi-house navicon" />
               {data.sections.home.sectionTitle}
             </a>
           </li>
           <li>
-            <a href="#about" style={{ textDecoration: "auto" }}>
+            <a
+              href="#about"
+              style={{ textDecoration: "auto" }}
+              onClick={(e) => {
+                writeEvent(
+                  sessionID,
+                  uniqueIdEvent(),
+                  "clic about section"
+                );
+              }}
+            >
               <i className="bi bi-person navicon" />{" "}
               {data.sections.about.sectionTitle}
             </a>
           </li>
           <li>
-            <a href="#resume" style={{ textDecoration: "auto" }}>
+            <a
+              href="#resume"
+              style={{ textDecoration: "auto" }}
+              onClick={(e) => {
+                writeEvent(
+                  sessionID,
+                  uniqueIdEvent(),
+                  "clic resume section"
+                );
+              }}
+            >
               <i className="bi bi-file-earmark-text navicon" />{" "}
               {data.sections.resume.sectionTitle}
             </a>
           </li>
           <li>
-            <a href="#skills" style={{ textDecoration: "auto" }}>
+            <a
+              href="#skills"
+              style={{ textDecoration: "auto" }}
+              onClick={(e) => {
+                writeEvent(
+                  sessionID,
+                  uniqueIdEvent(),
+                  "clic skills section"
+                );
+              }}
+            >
               <i className="bi bi-bar-chart-steps navicon" />{" "}
               {data.sections.skills.sectionTitle}
             </a>
           </li>
           <li>
-            <a href="#portfolio" style={{ textDecoration: "auto" }}>
+            <a
+              href="#portfolio"
+              style={{ textDecoration: "auto" }}
+              onClick={(e) => {
+                writeEvent(
+                  sessionID,
+                  uniqueIdEvent(),
+                  "clic portfolio section"
+                );
+              }}
+            >
               <i className="bi bi-images navicon" />{" "}
               {data.sections.projects.sectionTitle}
             </a>
           </li>
           <li>
-            <a href="#contact" style={{ textDecoration: "auto" }}>
+            <a
+              href="#contact"
+              style={{ textDecoration: "auto" }}
+              onClick={(e) => {
+                writeEvent(
+                  sessionID,
+                  uniqueIdEvent(),
+                  "clic contact section"
+                );
+              }}
+            >
               <i className="bi bi-envelope navicon" />{" "}
               {data.sections.contact.sectionTitle}
             </a>

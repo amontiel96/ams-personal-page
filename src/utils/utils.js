@@ -1,8 +1,40 @@
 import { v4 as uuidv4 } from 'uuid';
+
+
+var numberSequence = 0;
+
+function getSequence(){
+  var result = numberSequence;
+  numberSequence = numberSequence + 1;
+  return result;
+}
+
+function sequencialDate() {
+  const ahora = new Date();
+
+  const año = ahora.getFullYear(); // 2024
+  const mes = String(ahora.getMonth() + 1).padStart(2, '0'); // 08 (Mes de agosto)
+  const dia = String(ahora.getDate()).padStart(2, '0'); // 18
+  const horas = String(ahora.getHours()).padStart(2, '0'); // 14 (Hora en formato de 24 horas)
+  const minutos = String(ahora.getMinutes()).padStart(2, '0'); // 35
+  const segundos = String(ahora.getSeconds()).padStart(2, '0'); // 52
+
+  // Formato: YYYYMMDDHHMMSS
+  const fechaNumerica = `${año}${mes}${dia}${horas}${minutos}${segundos}`;
+
+  return fechaNumerica;
+}
+
 export function generateUniqueIdWithTimestamp() {
   const uniqueId = uuidv4();
 
-  return uniqueId;
+  return sequencialDate()+"-"+uniqueId;
+}
+
+export function uniqueIdEvent(){
+  const uniqueId = uuidv4();
+
+  return getSequence()+"-"+uniqueId;
 }
 
 
@@ -25,4 +57,6 @@ export function getRegisterDate(){
 
   return `${dia}-${mes}-${anio}-HR-${hora}-${minutos}-${segundos}-${periodo}`;
 }
+
+
 
